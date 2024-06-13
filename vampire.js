@@ -6,18 +6,15 @@ class Vampire {
     this.creator = null;
   }
 
-  // Adds the vampire as an offspring of this vampire
   addOffspring(vampire) {
     vampire.creator = this;
     this.offspring.push(vampire);
   }
 
-  // Returns the total number of vampires created by that vampire
   get numberOfOffspring() {
     return this.offspring.length;
   }
 
-  // Returns the number of vampires away from the original vampire this vampire is
   get numberOfVampiresFromOriginal() {
     let count = 0;
     let currentVampire = this;
@@ -28,12 +25,10 @@ class Vampire {
     return count;
   }
 
-  // Returns true if this vampire is more senior than the other vampire. (Who is closer to the original vampire)
   isMoreSeniorThan(vampire) {
     return this.numberOfVampiresFromOriginal < vampire.numberOfVampiresFromOriginal;
   }
 
-  // Returns the closest common ancestor of two vampires
   closestCommonAncestor(vampire) {
     let thisAncestors = [this];
     let currentVampire = this;
@@ -48,6 +43,45 @@ class Vampire {
     }
 
     return currentVampire;
+  }
+
+  vampireWithName(name) {
+    if (this.name === name) {
+      return this;
+    }
+    for (let child of this.offspring) {
+      let result = child.vampireWithName(name);
+      if (result) {
+        return result;
+      }
+    }
+    return null;
+  }
+
+  get totalDescendents() {
+    let count = 0;
+    function countDescendents(vampire) {
+      for (let child of vampire.offspring) {
+        count++;
+        countDescendents(child);
+      }
+    }
+    countDescendents(this);
+    return count;
+  }
+
+  get allMillennialVampires() {
+    let millennials = [];
+    function findMillennials(vampire) {
+      if (vampire.yearConverted > 1980) {
+        millennials.push(vampire);
+      }
+      for (let child of vampire.offspring) {
+        findMillennials(child);
+      }
+    }
+    findMillennials(this);
+    return millennials;
   }
 }
 
